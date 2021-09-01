@@ -1,33 +1,22 @@
 <?php
-    require 'db.php';
+    include ('config.php');
 
-    function getProducts()
+    function connect()
     {
-        session_start();
+        $servername = DBHOST;
+        $username = DBUSER;
+        $password = DBPWD;
+        $database = DBNAME;
 
-        global $products;
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
+            // set the PDO error mode to exception
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        if(!isset($_SESSION['cart']) || isset($_SESSION['cart']) && empty($_SESSION['cart'])) {
-            $query="select * from products";
-        } else {
-            $query = "SELECT * FROM products WHERE id NOT IN (".implode(',',$_SESSION['cart']).")";
+            return $conn;
+        } catch(PDOException $e) {
+            echo "Connection failed: " . $e->getMessage();
         }
-        $products =  db::getInstance()->get_result($query);
-        return $products;
-    }
-
-    function getSessionProducts ()
-    {
-        session_start();
-
-        global $products;
-
-        if(!empty($_SESSION['cart'])){
-            $query = "SELECT * FROM products WHERE id IN (".implode(',',$_SESSION['cart']).")";
-            $products =  db::getInstance()->get_result($query);
-        }
-
-        return $products;
     }
 
 ?>
