@@ -8,13 +8,18 @@ li, a {
     text-decoration: none;
 }
 
+.index-link {
+    float: right;
+    margin-top: 15px;
+    margin-right: 250px;
+}
+
 table {
     border: solid 2px black;
     border-collapse: collapse;
     display: table;
     width: 100%;
 }
-
 
 td, th {
     border: solid 1px black;
@@ -34,11 +39,13 @@ span {
     float: left;
     margin-bottom: 5px;
 }
+
 input, textarea {
     width: 75%;
     float: left;
     margin-bottom: 5px;
 }
+
 button {
     float: left;
     padding: 10px;

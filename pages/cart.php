@@ -15,7 +15,7 @@
         }
     }
 
-    if(isset($_GET['type']) && $_GET['type'] == 'checkout') {
+    if(isset($_POST['type']) && $_POST['type'] == 'checkout') {
 
         if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             $to      = SHOP_MANAGER_EMAIL;
@@ -26,39 +26,34 @@
                         </head>
                         <body>
                           <p> Order Date: '.date('d-m-Y H:i:s').'</p>
-                          <table>
-                            <tr>
-                              <th>Person</th><th>Contact Details</th><th>Comment</th>
+                          <table style="border: solid 2px black; border-collapse: collapse; display: table;  width: 100%;">
+                            <tr style="border: solid 1px black; padding: 10px; text-align: left;">
+                              <th>Name</th><th>Contact Details</th><th>Comment</th>
                             </tr>
-                            <tr>
-                              <td>'.strip_tags($_GET['name']).'</td><td>'.strip_tags($_GET['contact_details']).'</td><td>'.strip_tags($_GET['comment']).'</td>
+                            <tr style="border: solid 1px black; padding: 10px; text-align: left;">
+                              <td>'.strip_tags($_POST['name']).'</td><td>'.strip_tags($_POST['contact_details']).'</td><td>'.strip_tags($_POST['comment']).'</td>
                             </tr>
                           </table>
                           <br>
-                          <table>
-                            <tr>
+                          <table style="border: solid 2px black; border-collapse: collapse; display: table;  width: 100%;">
+                            <tr style="border: solid 1px black; padding: 10px; text-align: left;">
                               <th>Product Name</th><th>Description</th><th>Price</th><th>Image</th>
                             </tr>';
-            foreach ($products as  $product) {
-                $message .= '<tr>
-                                  <td>'.$product['title'].'</td><td>'.$product['title'].'</td><td>'.$product['price'].'</td><td>'.$product['image_path'].'</td>
-                                </tr>';
-            }
+                            foreach ($products as  $product) {
+                                $message .= '<tr style="border: solid 1px black; padding: 10px; text-align: left;">
+                                                  <td>'.$product['title'].'</td><td>'.$product['description'].'</td><td>'.$product['price'].'</td><td>'.$product['image_path'].'</td>
+                                                </tr>';
+                            }
             $message .=  '</table></body></html>';
-
 
             $headers = 'MIME-Version: 1.0'. "\r\n" .
                 'Content-type: text/html; charset=iso-8859-1'. "\r\n" .
-                'From: shop@noreply.com' . "\r\n" ;
+                'From: no-reply@shop.com' . "\r\n" ;
 
             mail($to, $subject, $message, $headers);
 
-
-    //            unset($_SESSION['cart']);
-            $success = "Checkout complete!";
+            unset($_SESSION['cart']);
             header('Location: cart.php');
-        } else {
-            $error = "Cart can't be empty";
         }
     }
 ?>
@@ -75,60 +70,57 @@
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-<?php include("header.php"); ?>
-<section>
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        <?php
-        if(isset($products)) {
-            foreach ($products as $row) { ?>
+    <?php include("header.php"); ?>
+    <section>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+            <?php
+            if(isset($products)) {
+                foreach ($products as $row) { ?>
+                    <tr>
+                        <td><?= $row['title'] ?></td>
+                        <td><?= $row['description'] ?></td>
+                        <td><?= $row['price'] ?></td>
+                        <td style="width: 10%"><a href="cart.php?product_id=<?= $row['id'] ?>">REMOVE</a></td>
+                    </tr>
+                <?php } ?>
+            <?php } else { ?>
                 <tr>
-                    <td><?= $row['title'] ?></td>
-                    <td><?= $row['description'] ?></td>
-                    <td><?= $row['price'] ?></td>
-                    <td style="width: 10%"><a href="cart.php?product_id=<?= $row['id'] ?>">REMOVE</a></td>
+                    <td>There are no products in cart!</td>
                 </tr>
             <?php } ?>
-        <?php } else { ?>
-            <tr>
-                <td>There are no products in cart!</td>
-            </tr>
-        <?php } ?>
-    </table>
-</section>
-<section>
-    <div class="">
-        <?php if(isset($products)) { ?>
-            <form class="checkout-form" method="GET">
-                <input type="hidden" name="type" value="checkout">
-                <div>
-                    <span>Name</span>
-                    <input type="text" name="name" required>
-                </div>
-                <div>
-                    <span>Contact Details</span>
-                    <textarea name="contact_details" required></textarea>
-                </div>
-                <div>
-                    <span>Comments</span>
-                    <textarea name="comment"></textarea>
-                </div>
-                <div>
-                    <!--                        <a class="btn" href="">Go to index</a>-->
-                    <button type="submit">Checkout</button>
-                </div>
-            </form>
-        <?php } ?>
-    </div>
-    <?php if(isset($success)) { ?>
-        <p><?= $success ?></p>
-    <?php } ?>
-</section>
+        </table>
+    </section>
+    <section>
+        <div class="">
+            <?php if(isset($products)) { ?>
+                <form class="checkout-form" method="POST">
+                    <input type="hidden" name="type" value="checkout">
+                    <div>
+                        <span>Name</span>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div>
+                        <span>Contact Details</span>
+                        <textarea name="contact_details" required></textarea>
+                    </div>
+                    <div>
+                        <span>Comments</span>
+                        <textarea name="comment"></textarea>
+                    </div>
+                    <div>
+                        <a class="index-link" href="index.php">Go to index</a>
+                        <button type="submit">Checkout</button>
+                    </div>
+                </form>
+            <?php } ?>
+        </div>
+    </section>
 
 </body>
 </html>
