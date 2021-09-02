@@ -1,29 +1,29 @@
 <?php
 
-    require_once "../common.php";
+require_once '../common.php';
 
-    if (!isset($_SESSION['cart']) || isset($_SESSION['cart']) && empty($_SESSION['cart'])) {
-        $query = connect()->prepare("SELECT * FROM products");
-    } else {
-        $cartIds = implode(',',$_SESSION['cart']);
-        $query = connect()->prepare("SELECT * FROM products WHERE id NOT IN (".$cartIds.")");
+if (!isset($_SESSION['cart']) || isset($_SESSION['cart']) && empty($_SESSION['cart'])) {
+    $query = connect()->prepare('SELECT * FROM products');
+} else {
+    $cartIds = implode(',', $_SESSION['cart']);
+    $query = connect()->prepare("SELECT * FROM products WHERE id NOT IN ($cartIds)");
+}
+
+$query->execute();
+$products = $query->fetchAll();
+
+if (isset($_POST['product_id'])) {
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
     }
-    $query->execute();
-    $query->setFetchMode();
-    $products = $query->fetchAll();
 
-    if (isset($_POST['product_id'])) {
-        if (!isset($_SESSION['cart'])) {
-            $_SESSION['cart'] = [];
-        }
-
-        if (!in_array($_GET['product_id'], $_SESSION['cart'])){
-            array_push($_SESSION['cart'], $_GET['product_id']);
-        }
-
-        header('Location: index.php');
-        exit;
+    if (!in_array($_POST['product_id'], $_SESSION['cart'])) {
+        array_push($_SESSION['cart'], $_POST['product_id']);
     }
+
+    header('Location: index.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -37,9 +37,9 @@
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>
-    <?php
-        require_once ("header.php");
-    ?>
+        <?php
+            require_once 'header.php';
+        ?>
         <section>
             <table>
                 <tr>
