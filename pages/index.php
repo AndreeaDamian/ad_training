@@ -2,7 +2,7 @@
 
 require_once '../common.php';
 
-if (!isset($_SESSION['cart']) || isset($_SESSION['cart']) && empty($_SESSION['cart'])) {
+if (!isset($_SESSION['cart'])) {
     $query = connect()->prepare('SELECT * FROM products');
 } else {
     $cartIds = implode(',', $_SESSION['cart']);
