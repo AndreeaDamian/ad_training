@@ -94,3 +94,14 @@ button {
     float: initial;
 }
 
+.add-btn a {
+    padding: 10px;
+    display: flex;
+    float: right;
+    background-color: cornflowerblue;
+    width: 100px;
+    margin: 0px 10px 10px 0px;
+    border-radius: 5px;
+    color: #FFFFFF !important;
+}
+
