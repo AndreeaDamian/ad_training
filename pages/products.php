@@ -37,12 +37,13 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
         <?php require_once 'header.php'; ?>
         <section>
             <div class="add-btn">
-                <a href="#"><?= translate('Add product') ?></a>
+                <a href="product.php"><?= translate('Add product') ?></a>
             </div>
             <table>
                 <tr>
                     <th><?= translate('Nr') ?></th>
                     <th><?= translate('Title') ?></th>
+                    <th><?= translate('Image') ?></th>
                     <th><?= translate('Description') ?></th>
                     <th><?= translate('Price') ?></th>
                     <th><?= translate('Actions') ?></th>
@@ -51,10 +52,11 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
                     <tr>
                         <td><?= $key+1 ?></td>
                         <td><?= $product['title'] ?></td>
+                        <td><img style="height: 100px;display: flex;" src="<?= $product['image_path'] ?>"></td>
                         <td><?= $product['description'] ?></td>
                         <td><?= $product['price'] ?></td>
                         <td style="width: 10%">
-                            <a href="#"><?= translate('EDIT') ?></a> |
+                            <a href="product.php?id=<?= $product['id'] ?>"><?= translate('EDIT') ?></a> |
                             <form action="products.php" method="POST">
                                 <input type="hidden" name="_METHOD" value="DELETE">
                                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">

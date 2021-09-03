@@ -105,3 +105,10 @@ button {
     color: #FFFFFF !important;
 }
 
+.checkout-form img {
+    height: 100px;
+    display: flex;
+}
+
+
+

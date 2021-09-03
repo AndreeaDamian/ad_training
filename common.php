@@ -33,6 +33,31 @@
         }
     }
 
+    function uploadImage($file)
+    {
+        $directoryPath = '../uploads/';
+        $filePath = $directoryPath . basename($file['name']);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+
+        $check = getimagesize($file['tmp_name']);
+        if($check !== false) {
+            $uploadOk = 1;
+        } else {
+            $error =  translate('File is not an image.');
+            $uploadOk = 0;
+        }
+
+        if ($uploadOk == 0) {
+            $error = translate('Sorry, your file was not uploaded.');
+        } else {
+            if (!is_dir($directoryPath)) mkdir($directoryPath, 0755);
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                return $directoryPath.basename($file['name']);
+            }
+        }
+    }
+
     function translate($string)
     {
         $strings = [
@@ -65,6 +90,11 @@
             'EDIT'          => 'EDITEAZA',
             'DELETE'        => 'STERGE',
             'Nr'            => 'Nr',
+            'Sorry, there was an error uploading your file.' => 'Ne pare rau! A aparut o eroare la incarcarea fisierului',
+            'Sorry, your file was not uploaded.' => 'Ne pare rau! Fisierul nu a fost incarcat!',
+            'File is not an image.' => 'Fisierul nu este o imagine!',
+            'Add'           => 'Adauga',
+            'Edit'          => 'Editeaza',
         ];
 
         if (!isset($strings[$string])) return $string;

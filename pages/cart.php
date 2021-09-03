@@ -62,6 +62,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
             <table>
                 <tr>
                     <th><?= translate('Title') ?></th>
+                    <th><?= translate('Image') ?></th>
                     <th><?= translate('Description') ?></th>
                     <th><?= translate('Price') ?></th>
                     <th><?= translate('Action') ?></th>
@@ -70,6 +71,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
                     foreach ($products as $row): ?>
                         <tr>
                             <td><?= $row['title'] ?></td>
+                            <td><img style="height: 100px;display: flex;" src="<?= $row['image_path'] ?>"></td>
                             <td><?= $row['description'] ?></td>
                             <td><?= $row['price'] ?></td>
                             <td style="width: 10%">
