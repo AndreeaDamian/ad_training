@@ -57,7 +57,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>
-        <?php include 'header.php'; ?>
+        <?php require_once 'header.php'; ?>
         <section>
             <table>
                 <tr>
