@@ -46,7 +46,7 @@
             'Cart'          => 'Cosul meu',
             'Products'      => 'Produse',
             'Logout'        => 'Dezautentificare',
-            'Remove'        => 'REMOVE',
+            'Remove'        => 'Sterge',
             'There are no products in cart!' => 'Nu exista produse in cos!',
             'Name'          => 'Nume',
             'Contact Details' => 'Detalii de contact',
@@ -60,6 +60,10 @@
             'Email'         => 'Email',
             'Password'      => 'Parola',
             'Login failed! Email or password incorrect!' => 'Autentificare nereusita! Email sau parola incorecta!',
+            'Add product'   => 'Adauga produs',
+            'Actions'       => 'Actiuni',
+            'EDIT'          => 'EDITEAZA',
+            'DELETE'        => 'STERGE',
         ];
 
         if (!isset($strings[$string])) return $string;
