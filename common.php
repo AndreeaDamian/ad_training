@@ -46,6 +46,17 @@
             'Cart'          => 'Cosul meu',
             'Products'      => 'Produse',
             'Logout'        => 'Dezautentificare',
+            'Remove'        => 'REMOVE',
+            'There are no products in cart!' => 'Nu exista produse in cos!',
+            'Name' => 'Nume',
+            'Contact Details' => 'Detalii de contact',
+            'Comments' => 'Comentarii',
+            'Go to index' => 'Catre Acasa',
+            'Checkout' => 'Checkout',
+            'Shop Order' => 'Comanda magazin',
+            'Order Date' => 'Data comanda',
+            'Product Name' => 'Nume produs',
+            'Image' => 'Imagine',
         ];
 
         if (!isset($strings[$string])) return $string;
