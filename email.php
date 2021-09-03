@@ -1,11 +1,3 @@
-<?php
-
-$cartIds = implode(',', $_SESSION['cart']);
-$query = connect()->prepare("SELECT * FROM products WHERE id IN ($cartIds)");
-$query->execute();
-$products = $query->fetchAll();
-
-?>
 <html>
     <head>
         <title><?= translate('Shop Order') ?></title>
