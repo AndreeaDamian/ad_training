@@ -64,6 +64,7 @@
             'Actions'       => 'Actiuni',
             'EDIT'          => 'EDITEAZA',
             'DELETE'        => 'STERGE',
+            'Nr'            => 'Nr',
         ];
 
         if (!isset($strings[$string])) return $string;

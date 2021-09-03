@@ -41,7 +41,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
             </div>
             <table>
                 <tr>
-                    <th><?= translate('string') ?></th>
+                    <th><?= translate('Nr') ?></th>
                     <th><?= translate('Title') ?></th>
                     <th><?= translate('Description') ?></th>
                     <th><?= translate('Price') ?></th>
