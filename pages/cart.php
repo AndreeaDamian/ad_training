@@ -13,11 +13,22 @@ if (isset($_POST['checkout'])) {
     if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         $to      = SHOP_MANAGER_EMAIL;
         $subject = 'Shop Order';
-
-        $date = date('d-m-Y H:i:s');
+        $date = date('Y-m-d H:i:s');
         $name = strip_tags($_POST['name']);
         $contactDetails = strip_tags($_POST['contact_details']);
         $comment = strip_tags($_POST['comment']);
+
+        $conn = connect();
+        $query = $conn->prepare("INSERT INTO orders(name, contact_details, comment, created_at) VALUES (?, ?, ?, ?)");
+        $query->execute([$name, $contactDetails, $comment, $date]);
+        $orderID = $conn->lastInsertId();
+
+        if ($orderID) {
+            foreach ($products as $product) {
+                $query2 = connect()->prepare("INSERT INTO order_product(order_id, product_id) VALUES (?, ?)");
+                $query2->execute([$orderID, $product['id']]);
+            }
+        }
 
         ob_start();
         include '../email.php';
@@ -53,7 +64,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Shop - Cart</title>
+        <title>Shop - <?= translate('Cart') ?></title>
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>

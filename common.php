@@ -38,7 +38,6 @@
         $directoryPath = '../uploads/';
         $filePath = $directoryPath . basename($file['name']);
         $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
         $check = getimagesize($file['tmp_name']);
         if($check !== false) {
@@ -56,6 +55,18 @@
                 return $directoryPath.basename($file['name']);
             }
         }
+    }
+
+    function getOrderedProducts($orderID)
+    {
+        $query = connect()->prepare("
+            SELECT *
+            FROM order_product
+            INNER JOIN products ON order_product.product_id=products.id 
+            WHERE order_id='$orderID'
+        ");
+        $query->execute();
+        return $query->fetchAll();
     }
 
     function translate($string)
@@ -77,7 +88,7 @@
             'Contact Details' => 'Detalii de contact',
             'Comments'      => 'Comentarii',
             'Go to index'   => 'Catre Acasa',
-            'Checkout'      => 'Checkout',
+            'Checkout'      => 'Trimite comanda',
             'Shop Order'    => 'Comanda magazin',
             'Order Date'    => 'Data comanda',
             'Product Name'  => 'Nume produs',
@@ -95,6 +106,13 @@
             'File is not an image.' => 'Fisierul nu este o imagine!',
             'Add'           => 'Adauga',
             'Edit'          => 'Editeaza',
+            'Date'          => 'Data',
+            'Customer Details' => 'Detalii client',
+            'Purchased products' => 'Produse Comandate',
+            'Total'         => 'Total',
+            'Orders'        => 'Comenzi',
+            'DETAILS'       => 'DETALII',
+            'Order Nr'      => 'Comanda Nr',
         ];
 
         if (!isset($strings[$string])) return $string;

@@ -2,6 +2,8 @@
 
 require_once '../common.php';
 
+unauthenticated();
+
 if (isset($_GET['id'])) {
     $productID = strip_tags($_GET['id']);
     $query = connect()->prepare("SELECT * FROM products WHERE id ='$productID'");
