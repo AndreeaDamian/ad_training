@@ -40,7 +40,8 @@ function unauthenticated()
 function uploadImage($file)
 {
     $directoryPath = '../uploads/';
-    $filePath = $directoryPath . basename($file['name']);
+    $name = rand().'-'.basename($file['name']);
+    $filePath = $directoryPath . $name;
     $uploadOk = 1;
 
     $check = getimagesize($file['tmp_name']);
@@ -58,7 +59,7 @@ function uploadImage($file)
             mkdir($directoryPath, 0755);
         }
         if (move_uploaded_file($file['tmp_name'], $filePath)) {
-            return $directoryPath.basename($file['name']);
+            return $directoryPath.$name;
         }
     }
 }
@@ -131,7 +132,6 @@ function translate($string)
         'Price is required.' => 'Pretul este obligatoriu',
         'Contact Details are required.' => 'Datele de contact sunt obligatorii',
         'Name is required.' => 'Numele este obligatoriu',
-        '' => '',
     ];
 
     if (!isset($strings[$string])) {
