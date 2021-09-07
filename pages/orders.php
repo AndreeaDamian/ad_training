@@ -45,8 +45,7 @@ $orders = $query->fetchAll();
                         </td>
                         <td>
                             <ul style="list-style-type: disc; display: inline-block;">
-                                <?php
-                                    $orderedProducts = getOrderedProducts($order['id']);
+                                <?php $orderedProducts = getOrderedProducts($order['id']);
                                     foreach($orderedProducts as $product): ?>
                                         <li><?= $product['title']?> - <?= $product['price']?> RON</li>
                                 <?php endforeach ?>
