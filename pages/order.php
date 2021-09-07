@@ -5,7 +5,8 @@ require_once '../common.php';
 unauthenticated();
 
 $orderID = strip_tags($_GET['id']);
-$query = connect()->prepare("SELECT * FROM orders WHERE id='$orderID'");
+$query = connect()->prepare("SELECT * FROM orders WHERE id = :orderID");
+$query->bindParam(':orderID', $orderID);
 $query->execute();
 $order = $query->fetch();
 $products = getOrderedProducts($orderID);
@@ -57,7 +58,7 @@ $products = getOrderedProducts($orderID);
                         <tr>
                             <td><?= $key+1 ?></td>
                             <td><?= $product['title'] ?></td>
-                            <td><img style="height: 100px;display: flex;" src="<?= $product['image_path'] ?>"></td>
+                            <td><img style="height: 100px;display: flex;" src="<?= $product['image_path'] ? $product['image_path'] : '../assets/images/placeholder.png' ?>"></td>
                             <td><?= $product['description'] ?></td>
                             <td><?= $product['price'] ?></td>
                         </tr>
