@@ -6,55 +6,89 @@ unauthenticated();
 
 if (isset($_GET['id'])) {
     $productID = strip_tags($_GET['id']);
-    $query = connect()->prepare("SELECT * FROM products WHERE id ='$productID'");
+    $query = connect()->prepare("SELECT * FROM products WHERE id = :productID");
+    $query->bindParam(':productID', $productID);
     $query->execute();
     $product = $query->fetch();
 }
-
+$titleErr = $priceErr = '';
+$title = $price = '';
 if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'PUT') {
     $id = strip_tags($_POST['id']);
-    $title = strip_tags($_POST['title']);
     $description = strip_tags($_POST['description']);
-    $price = str_replace(',', '.', strip_tags($_POST['price']));
-
-    if (is_uploaded_file($_FILES['image']['tmp_name'])) {
-        $image = uploadImage($_FILES['image']);
-        $query = connect()->prepare("
-            UPDATE products 
-            SET image_path='$image' 
-            WHERE id='$id'
-        ");
-        $query->execute();
+    if (empty($_POST['title'])) {
+        $titleErr = translate('Title is required.');
+    } else {
+        $title = strip_tags($_POST['title']);
     }
 
-    $query = connect()->prepare("
-        UPDATE products 
-        SET title='$title', description='$description', price='$price' 
-        WHERE id='$id'
-    ");
-    $query->execute();
+    if (empty($_POST['price'])) {
+        $priceErr = translate('Price is required.');
+    } else {
+        $price = str_replace(',', '.', strip_tags($_POST['price']));
+    }
 
-    header('Location: product.php?id='.$id);
-    exit;
+    if ($titleErr == '' && $priceErr == '') {
+        if (is_uploaded_file($_FILES['image']['tmp_name'])) {
+            $image = uploadImage($_FILES['image']);
+            $query = connect()->prepare("
+                UPDATE products 
+                SET image_path = :image  
+                WHERE id = :id
+            ");
+            $query->bindParam(':image', $image);
+            $query->bindParam(':id', $id);
+            $query->execute();
+        }
+
+        $query = connect()->prepare("
+            UPDATE products 
+            SET title = :title, description = :description, price = :price 
+            WHERE id = :id
+        ");
+        $query->bindParam(':title', $title);
+        $query->bindParam(':description', $description);
+        $query->bindParam(':price', $price);
+        $query->bindParam(':id', $id);
+        $query->execute();
+
+        header('Location: product.php?id='.$id);
+        exit;
+    }
 }
 
 if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'POST') {
-    $title = strip_tags($_POST['title']);
     $description = strip_tags($_POST['description']);
-    $price = strip_tags($_POST['price']);
     $image = null;
-
-    if (is_uploaded_file($_FILES['image']['tmp_name'])) {
-        $image =  uploadImage($_FILES['image']);
+    if (empty($_POST['title'])) {
+        $titleErr = translate('Title is required.');
+    } else {
+        $title = strip_tags($_POST['title']);
     }
-    $query = connect()->prepare("
-        INSERT INTO products (title, description, price, image_path) 
-        VALUES ('$title', '$description', '$price', '$image')
-    ");
-    $query->execute();
 
-    header('Location: products.php');
-    exit;
+    if (empty($_POST['price'])) {
+        $priceErr = translate('Price is required.');
+    } else {
+        $price = str_replace(',', '.', strip_tags($_POST['price']));
+    }
+
+    if ($titleErr == '' || $priceErr == '') {
+        if (is_uploaded_file($_FILES['image']['tmp_name'])) {
+            $image = uploadImage($_FILES['image']);
+        }
+        $query = connect()->prepare("
+            INSERT INTO products (title, description, price, image_path) 
+            VALUES (:title, :description, :price, :image)
+        ");
+        $query->bindParam(':title', $title);
+        $query->bindParam(':description', $description);
+        $query->bindParam(':price', $price);
+        $query->bindParam(':image', $image);
+        $query->execute();
+
+        header('Location: products.php');
+        exit;
+    }
 }
 
 ?>
@@ -72,7 +106,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'POST') {
     <body>
         <?php require_once 'header.php'; ?>
         <section>
-            <form class="checkout-form" action="product.php" method="POST" enctype="multipart/form-data">
+            <form class="checkout-form" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
                 <?php if (isset($productID)): ?>
                     <input type="hidden" name="_METHOD" value="PUT">
                     <input type="hidden" name="id" value="<?= $productID ?>">
@@ -103,6 +137,8 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'POST') {
             </form>
             <div>
                 <p><?= isset($error) ? $error : '' ?></p>
+                <p><?= isset($titleErr) ? $titleErr : '' ?></p>
+                <p><?= isset($priceErr) ? $priceErr : '' ?></p>
             </div>
         </section>
     </body>

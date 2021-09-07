@@ -127,6 +127,11 @@ function translate($string)
         'Orders'        => 'Comenzi',
         'DETAILS'       => 'DETALII',
         'Order Nr'      => 'Comanda Nr',
+        'Title is required.'      => 'Titlul este obligatoriu',
+        'Price is required.' => 'Pretul este obligatoriu',
+        'Contact Details are required.' => 'Datele de contact sunt obligatorii',
+        'Name is required.' => 'Numele este obligatoriu',
+        '' => '',
     ];
 
     if (!isset($strings[$string])) {
