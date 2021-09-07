@@ -28,7 +28,7 @@
            <?php foreach ($products as $product): ?>
                 <tr style="border: solid 1px black; padding: 10px; text-align: left;">
                     <td><?= $product['title'] ?></td>
-                    <td><img style="height: 100px;display: flex;" src="<?= $product['image_path'] ?>"></td>
+                    <td><img style="height: 100px;display: flex;" src="<?= $product['image_path'] ? $product['image_path'] : '../assets/images/placeholder.png'  ?>"></td>
                     <td><?= $product['description'] ?></td>
                     <td><?= $product['price'] ?></td>
                     <td><?= $product['image_path'] ?></td>
