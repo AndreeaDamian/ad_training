@@ -96,7 +96,7 @@ function translate($string)
         'Cart'          => 'Cosul meu',
         'Products'      => 'Produse',
         'Logout'        => 'Dezautentificare',
-        'Remove'        => 'Sterge',
+        'Remove'        => 'ELIMINA',
         'There are no products in cart!' => 'Nu exista produse in cos!',
         'Name'          => 'Nume',
         'Contact Details' => 'Detalii de contact',

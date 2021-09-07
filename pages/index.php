@@ -4,19 +4,13 @@ require_once '../common.php';
 
 if (!isset($_SESSION['cart'])) {
     $query = connect()->prepare('SELECT * FROM products');
+    $query->execute();
 } else {
     $cartIds = $_SESSION['cart'];
     $placeholders = implode(',', array_fill(0, count($cartIds), '?'));
     $query = connect()->prepare("SELECT * FROM products WHERE id NOT IN ($placeholders)");
-    foreach ($cartIds as $key => $value) {
-        $query->bindValue(
-                $key + 1,
-                $value,
-                PDO::PARAM_INT
-        );
-    }
+    $query->execute(array_values($cartIds));
 }
-$query->execute();
 $products = $query->fetchAll();
 
 if (isset($_POST['product_id'])) {
