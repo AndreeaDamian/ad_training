@@ -30,7 +30,7 @@ if (isset($_POST['checkout'])) {
             $contactDetails = strip_tags($_POST['contact_details']);
         }
 
-        if($nameErr == '' || $contactDetailsErr == '') {
+        if($nameErr == '' && $contactDetailsErr == '') {
             $comment = strip_tags($_POST['comment']);
             $conn = connect();
             $query = $conn->prepare("INSERT INTO orders(name, contact_details, comment, created_at) VALUES (?, ?, ?, ?)");
@@ -121,7 +121,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
         <section>
             <div>
                 <?php if (isset($products)): ?>
-                    <div style="display: flex; color: red">
+                    <div style="display: contents; color: red">
                         <p><?= $nameErr ?></p>
                         <p><?= $contactDetailsErr ?></p>
                     </div>
