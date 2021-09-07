@@ -1,6 +1,6 @@
 <?php
 
-require_once "config.php";
+require_once 'config.php';
 
 session_start();
 
@@ -21,7 +21,11 @@ function connect()
 
         return $conn;
     } catch (PDOException $e) {
-        throw new PDOException( 'Unable to connect to database', 0, $e);
+        throw new PDOException(
+            'Unable to connect to database',
+            0,
+            $e
+        );
     }
 }
 
@@ -50,7 +54,9 @@ function uploadImage($file)
     if ($uploadOk == 0) {
         $error = translate('Sorry, your file was not uploaded.');
     } else {
-        if (!is_dir($directoryPath)) mkdir($directoryPath, 0755);
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0755);
+        }
         if (move_uploaded_file($file['tmp_name'], $filePath)) {
             return $directoryPath.basename($file['name']);
         }
@@ -63,10 +69,18 @@ function getOrderedProducts($orderID)
         SELECT *
         FROM order_product
         INNER JOIN products ON order_product.product_id=products.id 
-        WHERE order_id='$orderID'
+        WHERE order_id = :orderID
     ");
+    $query->bindParam('orderID', $orderID);
     $query->execute();
     return $query->fetchAll();
+}
+
+function initCart()
+{
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
 }
 
 function translate($string)
@@ -115,7 +129,9 @@ function translate($string)
         'Order Nr'      => 'Comanda Nr',
     ];
 
-    if (!isset($strings[$string])) return $string;
+    if (!isset($strings[$string])) {
+        return $string;
+    }
     return $strings[$string];
 }
 

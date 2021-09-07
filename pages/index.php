@@ -5,24 +5,33 @@ require_once '../common.php';
 if (!isset($_SESSION['cart'])) {
     $query = connect()->prepare('SELECT * FROM products');
 } else {
-    $cartIds = implode(',', $_SESSION['cart']);
-    $query = connect()->prepare("SELECT * FROM products WHERE id NOT IN ($cartIds)");
+    $cartIds = $_SESSION['cart'];
+    $placeholders = implode(',', array_fill(0, count($cartIds), '?'));
+    $query = connect()->prepare("SELECT * FROM products WHERE id NOT IN ($placeholders)");
+    foreach ($cartIds as $key => $value) {
+        $query->bindValue(
+                $key + 1,
+                $value,
+                PDO::PARAM_INT
+        );
+    }
 }
-
 $query->execute();
 $products = $query->fetchAll();
 
 if (isset($_POST['product_id'])) {
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
+    $productID = strip_tags($_POST['product_id']);
+    if (is_numeric($productID) == true) {
+        initCart();
+        if (!in_array( $productID, $_SESSION['cart'])) {
+            array_push($_SESSION['cart'], $_POST['product_id']);
+        }
 
-    if (!in_array($_POST['product_id'], $_SESSION['cart'])) {
-        array_push($_SESSION['cart'], $_POST['product_id']);
+        header('Location: index.php');
+        exit;
+    } else {
+        $message = translate('There are some errors!');
     }
-
-    header('Location: index.php');
-    exit;
 }
 ?>
 
@@ -37,10 +46,9 @@ if (isset($_POST['product_id'])) {
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>
-        <?php
-            require_once 'header.php';
-        ?>
+        <?php require_once 'header.php'; ?>
         <section>
+            <h3 style="color: red;"><?= isset($message) ? $message : '' ?></h3>
             <table>
                 <tr>
                     <th><?= translate('Title') ?></th>
@@ -49,20 +57,19 @@ if (isset($_POST['product_id'])) {
                     <th><?= translate('Price') ?></th>
                     <th><?= translate('Action') ?></th>
                 </tr>
-                <?php
-                    foreach ($products as $row): ?>
-                        <tr>
-                            <td><?= $row['title'] ?></td>
-                            <td><img style="height: 100px;display: flex;" src="<?= $row['image_path'] ?>"></td>
-                            <td><?= $row['description'] ?></td>
-                            <td><?= $row['price'] ?></td>
-                            <td style="width: 10%">
-                                <form method="POST">
-                                    <input type="hidden" name="product_id" value="<?= $row['id'] ?>">
-                                    <button type="submit"><?= translate('ADD TO CART') ?></button>
-                                </form>
-                            </td>
-                        </tr>
+                <?php foreach ($products as $row): ?>
+                    <tr>
+                        <td><?= $row['title'] ?></td>
+                        <td><img style="height: 100px;display: flex;" src="<?= $row['image_path'] ? $row['image_path'] : '../assets/images/placeholder.png' ?>"></td>
+                        <td><?= $row['description'] ?></td>
+                        <td><?= $row['price'] ?></td>
+                        <td style="width: 10%">
+                            <form method="POST">
+                                <input type="hidden" name="product_id" value="<?= $row['id'] ?>">
+                                <button type="submit"><?= translate('ADD TO CART') ?></button>
+                            </form>
+                        </td>
+                    </tr>
                 <?php endforeach ?>
             </table>
         </section>
