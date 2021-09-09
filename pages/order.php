@@ -2,14 +2,22 @@
 
 require_once '../common.php';
 
-unauthenticated();
+redirectIfUnauthenticated();
 
-$orderID = strip_tags($_GET['id']);
-$query = connect()->prepare("SELECT * FROM orders WHERE id = :orderID");
-$query->bindParam(':orderID', $orderID);
-$query->execute();
+$conn = connect();
+$orderId = strip_tags($_GET['id']);
+$query = $conn->prepare('SELECT * FROM orders WHERE id = ?');
+$query->execute([$orderId]);
 $order = $query->fetch();
-$products = getOrderedProducts($orderID);
+
+$q = $conn->prepare('
+    SELECT *
+    FROM order_product
+    INNER JOIN products ON order_product.product_id=products.id 
+    WHERE order_id = ?
+');
+$q->execute([$order['id']]);
+$products = $q->fetchAll();
 
 ?>
 
@@ -19,7 +27,7 @@ $products = getOrderedProducts($orderID);
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Shop - <?= translate('Order Nr') ?> <?= $order['id'] ?></title>
+        <title><?= translate('Shop') ?> - <?= translate('Order Nr') ?> <?= $order['id'] ?></title>
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>
@@ -56,7 +64,7 @@ $products = getOrderedProducts($orderID);
                     </tr>
                     <?php foreach ($products as $key => $product): ?>
                         <tr>
-                            <td><?= $key+1 ?></td>
+                            <td><?= $key + 1 ?></td>
                             <td><?= $product['title'] ?></td>
                             <td><img style="height: 100px;display: flex;" src="<?= $product['image_path'] ? $product['image_path'] : '../assets/images/placeholder.png' ?>"></td>
                             <td><?= $product['description'] ?></td>

@@ -73,19 +73,6 @@ function uploadImage($file)
     }
 }
 
-function getOrderedProducts($orderID)
-{
-    $query = connect()->prepare("
-        SELECT *
-        FROM order_product
-        INNER JOIN products ON order_product.product_id=products.id 
-        WHERE order_id = :orderID
-    ");
-    $query->bindParam('orderID', $orderID);
-    $query->execute();
-    return $query->fetchAll();
-}
-
 function translate($string)
 {
     $strings = [
