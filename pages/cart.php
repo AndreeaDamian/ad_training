@@ -75,7 +75,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Shop - <?= translate('Cart') ?></title>
+        <title><?= translate('Shop') ?> - <?= translate('Cart') ?></title>
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>
