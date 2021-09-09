@@ -5,9 +5,6 @@ require_once '../common.php';
 redirectIfUnauthenticated();
 
 $conn = connect();
-$query = $conn->prepare('SELECT * FROM products');
-$query->execute();
-$products = $query->fetchAll();
 
 if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
     $productId = strip_tags($_POST['product_id']);
@@ -22,6 +19,10 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
     exit;
 }
 
+$query = $conn->prepare('SELECT * FROM products');
+$query->execute();
+$products = $query->fetchAll();
+
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +32,7 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Shop - <?= translate('Products') ?></title>
+        <title><?= translate('Shop') ?> - <?= translate('Products') ?></title>
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>

@@ -51,22 +51,19 @@ function redirectIfAuthenticated()
 
 function uploadImage($file)
 {
-    $directoryPath = '../uploads/';
+    $directoryPath = __DIR__.'/uploads/';
     $name = rand().'-'.basename($file['name']);
     $filePath = $directoryPath . $name;
     $uploadOk = 1;
 
     $check = getimagesize($file['tmp_name']);
-    if($check !== false) {
+    if ($check !== false) {
         $uploadOk = 1;
     } else {
-        $error =  translate('File is not an image.');
         $uploadOk = 0;
     }
 
-    if ($uploadOk == 0) {
-        $error = translate('Sorry, your file was not uploaded.');
-    } else {
+    if ($uploadOk == 1) {
         if (!is_dir($directoryPath)) {
             mkdir($directoryPath, 0755);
         }
@@ -137,6 +134,7 @@ function translate($string)
         'Price is required.' => 'Pretul este obligatoriu',
         'Contact Details are required.' => 'Datele de contact sunt obligatorii',
         'Name is required.' => 'Numele este obligatoriu',
+        'Shop' => 'Shop',
     ];
 
     if (!isset($strings[$string])) {
