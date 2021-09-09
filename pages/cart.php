@@ -2,7 +2,7 @@
 
 require_once '../common.php';
 
-if (!empty($_SESSION['cart'])){
+if (!empty($_SESSION['cart'])) {
     $cartIds = $_SESSION['cart'];
     $placeholders = implode(',', array_fill(0, count($cartIds), '?'));
     $query = connect()->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
@@ -10,38 +10,35 @@ if (!empty($_SESSION['cart'])){
     $products = $query->fetchAll();
 }
 
-$nameErr = $contactDetailsErr = '';
-$name = $contactDetails = '';
-
+$errors = [];
+$data = [];
 if (isset($_POST['checkout'])) {
-    if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-        $to      = SHOP_MANAGER_EMAIL;
-        $subject = 'Shop Order';
+    if (!empty($_SESSION['cart'])) {
+        $to = SHOP_MANAGER_EMAIL;
+        $subject = translate('Shop Order');
         $date = date('Y-m-d H:i:s');
         if (empty($_POST['name'])) {
-            $nameErr = translate('Name is required.');
+            $errors['name'] = translate('Name is required.');
         } else {
-            $name = strip_tags($_POST['name']);
+            $data['name'] = strip_tags($_POST['name']);
         }
 
         if (empty($_POST['contact_details'])) {
-            $contactDetailsErr = translate('Contact Details are required.');
+            $errors['contact_details'] = translate('Contact Details are required.');
         } else {
-            $contactDetails = strip_tags($_POST['contact_details']);
+            $data['contact_details'] = strip_tags($_POST['contact_details']);
         }
 
-        if($nameErr == '' && $contactDetailsErr == '') {
-            $comment = strip_tags($_POST['comment']);
+        if (count($errors) == 0) {
+            $data['comment'] = strip_tags($_POST['comment']);
             $conn = connect();
-            $query = $conn->prepare("INSERT INTO orders(name, contact_details, comment, created_at) VALUES (?, ?, ?, ?)");
-            $query->execute([$name, $contactDetails, $comment, $date]);
-            $orderID = $conn->lastInsertId();
+            $query = $conn->prepare('INSERT INTO orders(name, contact_details, comment, created_at) VALUES (?, ?, ?, ?)');
+            $query->execute([$data['name'], $data['contact_details'], $data['comment'], $date]);
+            $orderId = $conn->lastInsertId();
 
-            if ($orderID) {
-                foreach ($products as $product) {
-                    $query2 = connect()->prepare("INSERT INTO order_product(order_id, product_id) VALUES (?, ?)");
-                    $query2->execute([$orderID, $product['id']]);
-                }
+            foreach ($products as $product) {
+                $query2 = $conn->prepare('INSERT INTO order_product(order_id, product_id) VALUES (?, ?)');
+                $query2->execute([$orderId, $product['id']]);
             }
 
             ob_start();
@@ -65,9 +62,6 @@ if (isset($_POST['checkout'])) {
 if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
     $key = array_search($_POST['product_id'], $_SESSION['cart']);
     unset($_SESSION['cart'][$key]);
-    if (empty($_SESSION['cart'])) {
-        unset($_SESSION['cart']);
-    }
     header('Location: cart.php');
     exit;
 }
@@ -95,8 +89,8 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
                     <th><?= translate('Price') ?></th>
                     <th><?= translate('Action') ?></th>
                 </tr>
-                <?php if (isset($products)):
-                    foreach ($products as $row): ?>
+                <?php if (isset($products)): ?>
+                    <?php foreach ($products as $row): ?>
                         <tr>
                             <td><?= $row['title'] ?></td>
                             <td><img style="height: 100px;display: flex;" src="<?= $row['image_path'] ? $row['image_path'] : '../assets/images/placeholder.png' ?>"></td>
@@ -122,22 +116,22 @@ if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
             <div>
                 <?php if (isset($products)): ?>
                     <div style="display: contents; color: red">
-                        <p><?= $nameErr ?></p>
-                        <p><?= $contactDetailsErr ?></p>
+                        <p><?= isset($errors['name']) ? $errors['name'] : '' ?></p>
+                        <p><?= isset($errors['contact_details']) ? $errors['contact_details'] : '' ?></p>
                     </div>
-                    <form class="checkout-form" method="POST" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <form class="checkout-form" method="POST">
                         <input type="hidden" name="checkout" value="true">
                         <div>
                             <span><?= translate('Name') ?></span>
-                            <input type="text" name="name" value="<?= isset($_POST['name']) ? $_POST['name'] : '' ?>">
+                            <input type="text" name="name" value="<?= $_POST['name'] ?? '' ?>">
                         </div>
                         <div>
                             <span><?= translate('Contact Details') ?></span>
-                            <textarea name="contact_details"><?= isset($_POST['contact_details']) ? $_POST['contact_details'] : '' ?></textarea>
+                            <textarea name="contact_details"><?= $_POST['contact_details'] ?? '' ?></textarea>
                         </div>
                         <div>
                             <span><?= translate('Comments') ?></span>
-                            <textarea name="comment"><?= isset($_POST['comment']) ? $_POST['comment'] : '' ?></textarea>
+                            <textarea name="comment"><?= $_POST['comment'] ?? '' ?></textarea>
                         </div>
                         <div>
                             <a class="index-link" href="index.php"><?= translate('Go to index') ?></a>

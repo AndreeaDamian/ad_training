@@ -2,7 +2,7 @@
 
 require_once '../common.php';
 
-if (!isset($_SESSION['cart'])) {
+if (empty($_SESSION['cart'])) {
     $query = connect()->prepare('SELECT * FROM products');
     $query->execute();
 } else {
@@ -14,10 +14,9 @@ if (!isset($_SESSION['cart'])) {
 $products = $query->fetchAll();
 
 if (isset($_POST['product_id'])) {
-    $productID = strip_tags($_POST['product_id']);
-    if (is_numeric($productID) == true) {
-        initCart();
-        if (!in_array( $productID, $_SESSION['cart'])) {
+    $productId = strip_tags($_POST['product_id']);
+    if (is_numeric($productId) == true) {
+        if (!in_array( $productId, $_SESSION['cart'])) {
             array_push($_SESSION['cart'], $_POST['product_id']);
         }
 

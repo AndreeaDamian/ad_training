@@ -4,6 +4,10 @@ require_once 'config.php';
 
 session_start();
 
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
 function connect()
 {
     $servername = DBHOST;
@@ -75,13 +79,6 @@ function getOrderedProducts($orderID)
     $query->bindParam('orderID', $orderID);
     $query->execute();
     return $query->fetchAll();
-}
-
-function initCart()
-{
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
 }
 
 function translate($string)
