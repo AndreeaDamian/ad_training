@@ -32,8 +32,16 @@ if (isset($_POST['checkout'])) {
         if (count($errors) == 0) {
             $data['comment'] = strip_tags($_POST['comment']);
             $conn = connect();
-            $query = $conn->prepare('INSERT INTO orders(name, contact_details, comment, created_at) VALUES (?, ?, ?, ?)');
-            $query->execute([$data['name'], $data['contact_details'], $data['comment'], $date]);
+            $query = $conn->prepare('
+                INSERT INTO orders(name, contact_details, comment, created_at) 
+                VALUES (?, ?, ?, ?)
+            ');
+            $query->execute([
+                $data['name'],
+                $data['contact_details'],
+                $data['comment'],
+                $date
+            ]);
             $orderId = $conn->lastInsertId();
 
             foreach ($products as $product) {
