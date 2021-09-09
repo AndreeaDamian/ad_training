@@ -2,11 +2,18 @@
 
 require_once '../common.php';
 
-unauthenticated();
+redirectIfUnauthenticated();
 
-$query = connect()->prepare('SELECT * FROM orders ORDER BY id DESC');
+$query = connect()->prepare('
+    SELECT orders.*, SUM(products.price) as total
+    FROM orders 
+    INNER JOIN order_product ON order_product.order_id=orders.id
+    INNER JOIN products ON products.id=order_product.product_id
+    GROUP BY orders.id
+    ORDER BY orders.id DESC
+');
 $query->execute();
-$orders = $query->fetchAll();
+$orders = $query->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -17,7 +24,7 @@ $orders = $query->fetchAll();
         <meta name="viewport"
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Shop - <?= translate('Orders') ?></title>
+        <title><?= translate('Shop') ?> - <?= translate('Orders') ?></title>
         <link rel="stylesheet" href="../assets/style.css">
     </head>
     <body>
@@ -28,11 +35,10 @@ $orders = $query->fetchAll();
                     <th><?= translate('ID') ?></th>
                     <th style="width: 10%"><?= translate('Date') ?></th>
                     <th><?= translate('Customer Details') ?></th>
-                    <th style="width: 25%"><?= translate('Purchased products') ?></th>
                     <th style="width: 10%"><?= translate('Total') ?></th>
                     <th><?= translate('Actions') ?></th>
                 </tr>
-                <?php foreach ($orders as $key => $order): ?>
+                <?php foreach ($orders as $order): ?>
                     <tr>
                         <td><?= $order['id'] ?></td>
                         <td><?= $order['created_at'] ?></td>
@@ -43,15 +49,7 @@ $orders = $query->fetchAll();
                                 <li><?= translate('Comment') ?>: <?= $order['comment'] ?></li>
                             </ul>
                         </td>
-                        <td>
-                            <ul style="list-style-type: disc; display: inline-block;">
-                                <?php $orderedProducts = getOrderedProducts($order['id']);
-                                    foreach($orderedProducts as $product): ?>
-                                        <li><?= $product['title']?> - <?= $product['price']?> RON</li>
-                                <?php endforeach ?>
-                            </ul>
-                        </td>
-                        <td><?= array_sum(array_column($orderedProducts, 'price')) ?> RON</td>
+                        <td><?= $order['total'] ?> RON</td>
                         <td><a href="order.php?id=<?= $order['id'] ?>"><?= translate('DETAILS') ?></a></td>
                     </tr>
                 <?php endforeach ?>
