@@ -33,7 +33,7 @@ function connect()
     }
 }
 
-function unauthenticated()
+function redirectIfUnauthenticated()
 {
     if (!isset($_SESSION['login'])) {
         header('Location: login.php');
@@ -41,7 +41,7 @@ function unauthenticated()
     }
 }
 
-function authenticated()
+function redirectIfAuthenticated()
 {
     if (isset($_SESSION['login'])) {
         header('Location: products.php');

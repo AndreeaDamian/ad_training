@@ -2,6 +2,14 @@
 
 require_once '../common.php';
 
+if (isset($_POST['logout'])) {
+    unset($_SESSION['login']);
+    header('Location: login.php');
+    exit;
+}
+
+redirectIfAuthenticated();
+
 $error = [];
 
 if (isset($_POST['login'])) {
@@ -20,13 +28,7 @@ if (isset($_POST['login'])) {
 
 }
 
-if (isset($_POST['logout'])) {
-    unset($_SESSION['login']);
-    header('Location: login.php');
-    exit;
-}
 
-authenticated();
 
 ?>
 
