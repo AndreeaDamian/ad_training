@@ -9,24 +9,24 @@ if (isset($_POST['login'])) {
     $password = strip_tags($_POST['password']);
     if (empty($email) || empty($password)) {
         $error['login'] = translate('Login failed! Email or password incorrect!');
+    } elseif ($email == ADMIN_USERNAME && $password == ADMIN_PASSWORD) {
+        $_SESSION['login'] = 'Admin is logged!';
+
+        header('Location: products.php');
+        exit;
     } else {
-        if ($email == ADMIN_USERNAME && $password == ADMIN_PASSWORD) {
-            if (!isset($_SESSION['login'])) {
-                $_SESSION['login'] = 'Admin is logged!';
-            }
-            header('Location: index.php');
-            exit;
-        } else {
-            $error['login'] = translate('Login failed! Email or password incorrect!');
-        }
+        $error['login'] = translate('Login failed! Email or password incorrect!');
     }
+
 }
 
-if (isset($_GET['logout'])) {
+if (isset($_POST['logout'])) {
     unset($_SESSION['login']);
     header('Location: login.php');
     exit;
 }
+
+authenticated();
 
 ?>
 
@@ -58,7 +58,7 @@ if (isset($_GET['logout'])) {
                 </form>
             </div>
             <div>
-                <p style="text-align: center; color: red"><?= isset($error['login']) ? $error['login'] : '' ?></p>
+                <p style="text-align: center; color: red"><?= $error['login'] ?? '' ?></p>
             </div>
         </section>
     </body>

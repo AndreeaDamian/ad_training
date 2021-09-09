@@ -41,6 +41,14 @@ function unauthenticated()
     }
 }
 
+function authenticated()
+{
+    if (isset($_SESSION['login'])) {
+        header('Location: products.php');
+        exit;
+    }
+}
+
 function uploadImage($file)
 {
     $directoryPath = '../uploads/';
