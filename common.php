@@ -54,23 +54,15 @@ function uploadImage($file)
     $directoryPath = __DIR__.'/uploads/';
     $name = rand().'-'.basename($file['name']);
     $filePath = $directoryPath . $name;
-    $uploadOk = 1;
 
-    $check = getimagesize($file['tmp_name']);
-    if ($check !== false) {
-        $uploadOk = 1;
-    } else {
-        $uploadOk = 0;
+    if (!is_dir($directoryPath)) {
+        mkdir($directoryPath, 0755);
     }
 
-    if ($uploadOk == 1) {
-        if (!is_dir($directoryPath)) {
-            mkdir($directoryPath, 0755);
-        }
-        if (move_uploaded_file($file['tmp_name'], $filePath)) {
-            return $directoryPath.$name;
-        }
+    if (move_uploaded_file($file['tmp_name'], $filePath)) {
+        return $directoryPath.$name;
     }
+
 }
 
 function translate($string)
