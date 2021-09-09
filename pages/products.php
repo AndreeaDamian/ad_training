@@ -2,20 +2,21 @@
 
 require_once '../common.php';
 
-unauthenticated();
+redirectIfUnauthenticated();
 
-$query = connect()->prepare('SELECT * FROM products');
+$conn = connect();
+$query = $conn->prepare('SELECT * FROM products');
 $query->execute();
 $products = $query->fetchAll();
 
 if (isset($_POST['_METHOD']) && $_POST['_METHOD'] == 'DELETE') {
-    $productID = strip_tags($_POST['product_id']);
-    $query = connect()->prepare("SELECT * FROM products WHERE id =$productID");
-    $query->execute();
+    $productId = strip_tags($_POST['product_id']);
+    $query = $conn->prepare('SELECT * FROM products WHERE id=?');
+    $query->execute([$productId]);
     $product = $query->fetch();
     if ($product) {
-        $query = connect()->prepare("DELETE FROM products WHERE id=$productID");
-        $query->execute();
+        $query = $conn->prepare('DELETE FROM products WHERE id=?');
+        $query->execute([$productId]);
     }
     header ('Location: products.php');
     exit;
